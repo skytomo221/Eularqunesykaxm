@@ -32,7 +32,76 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+.board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.status {
+  margin-bottom: 10px;
+}
+
+.square,
+.square-null,
+.square-low,
+.square-normal,
+.square-high {
+  border: 1px solid #999;
+  float: left;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 34px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 34px;
+}
+
+.square {
+  background: #fff;
+}
+
+.square-null {
+  background: lightgray;
+}
+
+.square-low {
+  background: #FFC7CE;
+  color: #9C0006;
+}
+
+.square-normal {
+  background: #FFEB9C;
+  color: #9C5700;
+}
+
+.square-high {
+  background: #C6EFCE;
+  color: #006100;
+}
+
+.square:focus {
+  outline: none;
+}
+
+.kbd-navigation .square:focus {
+  background: #ddd;
+}
+
+.game {
+  display: flex;
+  flex-direction: row;
+}
+
+.game-info {
+  margin-left: 20px;
 }
