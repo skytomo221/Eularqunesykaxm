@@ -1,16 +1,15 @@
-import React from 'react';
-import logo from './logo.svg';
+import * as React from 'react';
 import './App.css';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
+import * as Box from '@material-ui/core/Box';
+import * as Button from '@material-ui/core/Button';
 
-class Board extends React.Component {
-  renderSquare(i) {
-    return <Square value={i} />;
-  }
+interface Props {
+  value: any;
 }
 
-class Square extends React.Component {
+interface State { }
+
+class Square extends React.Component<Props> {
   render() {
     return (
       <button className="square">
@@ -21,7 +20,7 @@ class Square extends React.Component {
 }
 
 
-class SquareNull extends React.Component {
+class SquareNull extends React.Component<Props> {
   render() {
     return (
       <button className="square-null">
@@ -32,7 +31,7 @@ class SquareNull extends React.Component {
 }
 
 
-class SquareLow extends React.Component {
+class SquareLow extends React.Component<Props> {
   render() {
     return (
       <button className="square-low">
@@ -42,7 +41,7 @@ class SquareLow extends React.Component {
   }
 }
 
-class SquareNormal extends React.Component {
+class SquareNormal extends React.Component<Props> {
   render() {
     return (
       <button className="square-normal">
@@ -52,7 +51,7 @@ class SquareNormal extends React.Component {
   }
 }
 
-class SquareHigh extends React.Component {
+class SquareHigh extends React.Component<Props> {
   render() {
     return (
       <button className="square-high">
@@ -63,23 +62,23 @@ class SquareHigh extends React.Component {
 }
 
 class LineparineTable extends React.Component {
-  renderSquare(i) {
+  renderSquare(i: any) {
     return <Square value={i} />;
   }
 
-  renderSquareFreq(i) {
+  renderSquareFreq(i: (number | null)) {
     if (i === null) {
-      return <SquareNull />;
+      return <SquareNull value="" />;
     } else if (i <= 0.1) {
       return <SquareLow value="×" />;
     } else if (i < 0.4) {
-      return <SquareLow />;
+      return <SquareLow value="" />;
     } else if (i <= 0.6) {
-      return <SquareNormal />;
+      return <SquareNormal value="" />;
     } else if (i < 0.9) {
       return <SquareHigh value="○" />;
     } else {
-      return <SquareHigh />;
+      return <SquareNull value="" />;
     }
   }
 
