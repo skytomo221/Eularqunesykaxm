@@ -1,63 +1,38 @@
 import * as React from 'react';
 import './App.css';
-import * as Box from '@material-ui/core/Box';
-import * as Button from '@material-ui/core/Button';
+import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
+import { makeStyles } from '@material-ui/core/styles';
+import { withStyles, WithStyles } from '@material-ui/core/styles';
 
 interface Props {
   value: any;
+  left?: string;
+  right?: string;
 }
 
 interface State { }
 
 class Square extends React.Component<Props> {
-  render() {
-    return (
-      <button className="square">
-        {this.props.value}
-      </button>
-    );
-  }
-}
-
-
-class SquareNull extends React.Component<Props> {
-  render() {
-    return (
-      <button className="square-null">
-        {this.props.value}
-      </button>
-    );
-  }
-}
-
-
-class SquareLow extends React.Component<Props> {
-  render() {
-    return (
-      <button className="square-low">
-        {this.props.value}
-      </button>
-    );
-  }
-}
-
-class SquareNormal extends React.Component<Props> {
-  render() {
-    return (
-      <button className="square-normal">
-        {this.props.value}
-      </button>
-    );
-  }
-}
-
-class SquareHigh extends React.Component<Props> {
-  render() {
-    return (
-      <button className="square-high">
-        {this.props.value}
-      </button>
-    );
+    render() {
+  
+    if (this.props.value === null) {
+      return (<button className="square-null" />);
+    } else if (typeof this.props.value === "string") {
+      return (<button className="square">{this.props.value}</button>);
+    } else if (this.props.value <= 0.1) {
+      return (<button className="square-low">×</button>);
+    } else if (this.props.value < 0.4) {
+      return (<button className="square-low" />);
+    } else if (this.props.value <= 0.6) {
+      return (<button className="square-normal" />);
+    } else if (this.props.value < 0.9) {
+      return (<button className="square-high" />);
+    } else if (this.props.value <= 1.0) {
+      return (<button className="square-high">○</button>);
+    } else {
+      return (<button className="square">{this.props.value}</button>);
+    }
   }
 }
 
@@ -66,20 +41,12 @@ class LineparineTable extends React.Component {
     return <Square value={i} />;
   }
 
-  renderSquareFreq(i: (number | null)) {
-    if (i === null) {
-      return <SquareNull value="" />;
-    } else if (i <= 0.1) {
-      return <SquareLow value="×" />;
-    } else if (i < 0.4) {
-      return <SquareLow value="" />;
-    } else if (i <= 0.6) {
-      return <SquareNormal value="" />;
-    } else if (i < 0.9) {
-      return <SquareHigh value="○" />;
-    } else {
-      return <SquareNull value="" />;
-    }
+  renderToolTipSquare(i: any, left: string, right: string) {
+    return (
+      <Tooltip title={left + "+" + right}>
+        <Square value={i} />
+      </Tooltip>
+    );
   }
 
   render() {
@@ -137,14 +104,15 @@ class LineparineTable extends React.Component {
     return (
       <div>
         <div className="board-row">
-          {this.renderSquare(null)}
+          {this.renderSquare(" ")}
           {letters.map((letter) => { return this.renderSquare(letter) })}
         </div>
-        {letters.map((letter) => {
+        {letters.map((left, leftIndex) => {
           return (
             <div className="board-row">
-              {this.renderSquare(letter)}
-              {freq[letters.findIndex((l) => { return l === letter })].map((freq) => { return this.renderSquareFreq(freq) })}
+              {this.renderSquare(left)}
+              {freq[leftIndex]
+                .map((freq, rightIndex) => { return this.renderToolTipSquare(freq, left, letters[rightIndex]) })}
             </div>
           );
         })}
