@@ -5,6 +5,7 @@ import App from './App';
 
 ReactDOM.render(
   <React.StrictMode>
+    <h1>リパライン語の緩衝母音について</h1>
     <App />
   </React.StrictMode>,
   document.getElementById('root')
