@@ -38,6 +38,14 @@
   }
 }
 
+.paragraph {
+  padding: 0.5em 0;
+}
+
+.board-row {
+  padding: 0;
+}
+
 .board-row:after {
   clear: both;
   content: "";
@@ -55,10 +63,12 @@
 .square-high {
   border: 1px solid #999;
   float: left;
-  font-size: calc(100vw / 42 * 0.5);
+  font-size: min(calc(100vw / 42 * 0.5), calc(17px));
   font-weight: bold;
   width: calc(100vw / 42);
+  max-width: 32px;
   height: calc(100vw / 42);
+  max-height: 32px;
   padding-top: 100%;
   margin-right: -1px;
   margin-top: -1px;
