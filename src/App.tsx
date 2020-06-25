@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './App.css';
-import { letters, rates } from './data';
+import { letters, rates, examples, Example } from './data';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -14,6 +14,10 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import { AppBar, Toolbar, IconButton, Typography, List } from '@material-ui/core';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@material-ui/core/ListItem';
+import Divider from '@material-ui/core/Divider';
 
 interface Props {
   value?: any;
@@ -47,17 +51,27 @@ class Square extends React.Component<Props> {
 }
 
 function App() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setDialogOpen] = React.useState(false);
   const [left, setLeft] = React.useState("");
   const [right, setRight] = React.useState("");
   const [info, setInfo] = React.useState(<span />);
+  const [examplesState, setExapmlesState] = React.useState(examples['i+i']);
+  const [fullDialogOpen, setFullDialogOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleDialogClickOpen = () => {
+    setDialogOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleFullDialogClickOpen = () => {
+    setFullDialogOpen(true);
+  };
+
+  const handleFullDialogClose = () => {
+    setFullDialogOpen(false);
   };
 
   const renderSquare = (i: any) => {
@@ -67,6 +81,20 @@ function App() {
   const renderToolTipSquare = (i: number | null, left: string, right: string, handleClickOpen: any) => {
     return <Square value={i} onClick={handleClickOpen} />;
   };
+
+  const renderExamples = (list: Example[]) => {
+    return (
+      <List>
+        {list.map((example) => {
+          return (
+            <ListItem button>
+              <ListItemText primary={example.word} secondary={example.parts.join(' ')} />
+            </ListItem>
+          );
+        })}
+      </List>
+    );
+  }
 
   const getInfo = (value: (number | null)) => {
     if (value === null) {
@@ -107,7 +135,7 @@ function App() {
               {renderSquare(left)}
               {letters.map((right, rightIndex) => {
                 return (renderToolTipSquare(rates[left + '+' + right], left, right, () => {
-                  handleClickOpen();
+                  handleDialogClickOpen();
                   setLeft(left);
                   setRight(right);
                   setInfo(getInfo(rates[left + '+' + right]));
@@ -164,7 +192,7 @@ function App() {
       </div>
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={handleDialogClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -175,10 +203,30 @@ function App() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary" autoFocus>
+          <Button onClick={() => { handleDialogClose(); handleFullDialogClickOpen(); }} autoFocus>
+            詳細
+          </Button>
+          <Button onClick={handleDialogClose} color="primary" autoFocus>
             OK
           </Button>
         </DialogActions>
+      </Dialog>
+      <Dialog
+        fullScreen
+        open={fullDialogOpen}
+        onClose={handleFullDialogClose}
+      >
+        <AppBar>
+          <Toolbar>
+            <Typography variant="h6">
+              詳細情報
+            </Typography>
+            <Button autoFocus color="inherit" onClick={handleFullDialogClose}>
+              閉じる
+            </Button>
+          </Toolbar>
+        </AppBar>
+        {renderExamples(examples['i+i'])}
       </Dialog>
     </div>
   );
