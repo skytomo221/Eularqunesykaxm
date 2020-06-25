@@ -1,7 +1,9 @@
 import * as React from 'react';
 import './App.css';
-import { letters, rates, examples, Example } from './data';
+import { letters, rates, examples, Example, Letter } from './data';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import CloseIcon from '@material-ui/icons/Close';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -50,7 +52,21 @@ class Square extends React.Component<Props> {
   }
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    appBar: {
+      position: 'relative',
+    },
+    title: {
+      marginLeft: theme.spacing(2),
+      flex: 1,
+    },
+  }),
+);
+
 function App() {
+  const classes = useStyles();
+
   const [open, setDialogOpen] = React.useState(false);
   const [left, setLeft] = React.useState("");
   const [right, setRight] = React.useState("");
@@ -78,7 +94,7 @@ function App() {
     return <Square value={i} />;
   };
 
-  const renderToolTipSquare = (i: number | null, left: string, right: string, handleClickOpen: any) => {
+  const renderToolTipSquare = (i: number | null, left: Letter, right: Letter, handleClickOpen: any) => {
     return <Square value={i} onClick={handleClickOpen} />;
   };
 
@@ -119,11 +135,10 @@ function App() {
 
   return (
     <div>
-      <div>
+      <div style={{ padding: '0 0 1em 0' }}>
         コーパスから得た情報を基に表を構成しています。<br />
         出現率は（緩衝音が登場したパターン+1）/（全てのパターン+2）で計算を行っています。
       </div>
-      <br />
       <div>
         <div className="board-row">
           {renderSquare(" ")}
@@ -139,56 +154,107 @@ function App() {
                   setLeft(left);
                   setRight(right);
                   setInfo(getInfo(rates[left + '+' + right]));
+                  setExapmlesState((examples[left + '+' + right] === undefined) ? (new Array<Example>(0)) : examples[left + '+' + right]);
                 }));
               })}
             </div>
           );
         })}
       </div>
-      <br />
-      <div>
+      <div className='paragraph'>
         <TableContainer component={Paper} style={{ width: 'min(100%, 400px)' }}>
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>マーク</TableCell>
+                <TableCell>凡例</TableCell>
                 <TableCell>種類</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               <TableRow key={"row.name"}>
                 <TableCell component="th" scope="row">
-                  {renderToolTipSquare(0.9, '', '', () => { })}
+                  {renderToolTipSquare(0.9, 't', 'n', () => { })}
                 </TableCell>
                 <TableCell>緩衝音を付けるべき</TableCell>
               </TableRow>
               <TableRow key={"row.name"}>
                 <TableCell component="th" scope="row">
-                  {renderToolTipSquare(0.7, '', '', () => { })}
+                  {renderToolTipSquare(0.7, 'o', 'a', () => { })}
                 </TableCell>
                 <TableCell>緩衝音を付けたほうがいい</TableCell>
               </TableRow>
               <TableRow key={"row.name"}>
                 <TableCell component="th" scope="row">
-                  {renderToolTipSquare(0.5, '', '', () => { })}
+                  {renderToolTipSquare(0.5, 'i', 'y', () => { })}
                 </TableCell>
                 <TableCell>緩衝音を付けても付けなくてもいい</TableCell>
               </TableRow>
               <TableRow key={"row.name"}>
                 <TableCell component="th" scope="row">
-                  {renderToolTipSquare(0.3, '', '', () => { })}
+                  {renderToolTipSquare(0.3, 'i', 'u', () => { })}
                 </TableCell>
                 <TableCell>緩衝音を付けないほうがいい</TableCell>
               </TableRow>
               <TableRow key={"row.name"}>
                 <TableCell component="th" scope="row">
-                  {renderToolTipSquare(0.1, '', '', () => { })}
+                  {renderToolTipSquare(0.1, 'i', 'i', () => { })}
                 </TableCell>
                 <TableCell>緩衝音を付けないべき</TableCell>
               </TableRow>
             </TableBody>
           </Table>
         </TableContainer>
+      </div>
+      <br />
+      <div className='paragraph'>
+        <h2>緩衝音について</h2>
+        <div>緩衝音とは、単語に接辞が付くときに、子音か母音が連続してしまい発音しづらくなるときに挟まれる音です。</div>
+        <div>緩衝音には種類があり、単語のクラスによって入れるべき緩衝音が違います。リパライン語の単語クラスは、4つ存在しており、それらは一番最後の母音によって明確に区別されます。</div>
+        <div className='paragraph'>
+          <TableContainer component={Paper} style={{ width: 'min(100%, 600px)' }}>
+            <Table aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">最後の母音</TableCell>
+                  <TableCell align="center">クラス</TableCell>
+                  <TableCell align="center">緩衝母音</TableCell>
+                  <TableCell align="center">緩衝子音</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow key={"row.name"}>
+                  <TableCell align="center">a(r), o(r)</TableCell>
+                  <TableCell align="center">紅クラス（クラス1）</TableCell>
+                  <TableCell align="center">-a-</TableCell>
+                  <TableCell align="center">-v-</TableCell>
+                </TableRow>
+                <TableRow key={"row.name"}>
+                  <TableCell align="center">e(r), i(r)</TableCell>
+                  <TableCell align="center">蒼クラス（クラス2）</TableCell>
+                  <TableCell align="center">-e-</TableCell>
+                  <TableCell align="center">-rg-</TableCell>
+                </TableRow>
+                <TableRow key={"row.name"}>
+                  <TableCell align="center">o(r)</TableCell>
+                  <TableCell align="center">烏クラス（クラス3）</TableCell>
+                  <TableCell align="center">-u-</TableCell>
+                  <TableCell align="center">-m-</TableCell>
+                </TableRow>
+                <TableRow key={"row.name"}>
+                  <TableCell align="center">y(r)</TableCell>
+                  <TableCell align="center">葵クラス（クラス4）</TableCell>
+                  <TableCell align="center">-i-</TableCell>
+                  <TableCell align="center">-l-</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+      </div>
+      <div className='paragraph' />
+      <div className='paragraph'>
+        <Button onClick={() => { window.open('https://skytomo221.github.io/') }}>作者のページを見る</Button>
+        <Button onClick={() => { window.open('https://github.com/skytomo221/eularqunesykaxm') }}>リポジトリ</Button>
       </div>
       <Dialog
         open={open}
@@ -216,17 +282,18 @@ function App() {
         open={fullDialogOpen}
         onClose={handleFullDialogClose}
       >
-        <AppBar>
+        <AppBar className={classes.appBar}>
           <Toolbar>
+            <IconButton autoFocus edge="start" color="inherit" onClick={handleFullDialogClose} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+            &ensp;
             <Typography variant="h6">
-              詳細情報
+              {"【" + left + " + " + right + "】 詳細情報"}
             </Typography>
-            <Button autoFocus color="inherit" onClick={handleFullDialogClose}>
-              閉じる
-            </Button>
           </Toolbar>
         </AppBar>
-        {renderExamples(examples['i+i'])}
+        {renderExamples(examplesState)}
       </Dialog>
     </div>
   );
